@@ -1,0 +1,167 @@
+openapi: 3.0.3
+info:
+  title: Assisted Migration Agent API
+  version: v1
+servers:
+  - url: /api/v1
+paths:
+  /agent:
+    get:
+      summary: Get agent status
+      operationId: getAgentStatus
+      responses:
+        '200':
+          description: Agent status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentStatus'
+        '500':
+          description: Internal server error
+    post:
+      summary: Change agent mode
+      operationId: setAgentMode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentModeRequest'
+      responses:
+        '200':
+          description: Mode changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentStatus'
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal server error
+
+  /collector:
+    get:
+      summary: Get collector status
+      operationId: getCollectorStatus
+      responses:
+        '200':
+          description: Collector status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectorStatus'
+        '500':
+          description: Internal server error
+    post:
+      summary: Start inventory collection
+      operationId: startCollector
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectorStartRequest'
+      responses:
+        '202':
+          description: Collection started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectorStatus'
+        '400':
+          description: Invalid request
+        '409':
+          description: Collection already in progress
+        '500':
+          description: Internal server error
+    delete:
+      summary: Stop collection
+      operationId: stopCollector
+      responses:
+        '204':
+          description: Collection stopped
+        '500':
+          description: Internal server error
+
+  /collector/inventory:
+    get:
+      summary: Get collected inventory
+      operationId: getInventory
+      responses:
+        '200':
+          description: Collected inventory
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/kubev2v/migration-planner/main/api/v1alpha1/openapi.yaml#/components/schemas/Inventory'
+        '404':
+          description: Inventory not available
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    CollectorStartRequest:
+      type: object
+      required:
+        - url
+        - username
+        - password
+      properties:
+        url:
+          type: string
+          format: uri
+          description: vCenter URL
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+
+    CollectorStatus:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - idle
+            - connecting
+            - connected
+            - inventory_collecting
+            - inventory_collected
+            - error
+        error:
+          type: string
+          description: Error message when status is error
+
+    AgentStatus:
+      type: object
+      required:
+        - mode
+        - console_connection
+      properties:
+        mode:
+          type: string
+          enum:
+            - connected
+            - disconnected
+        console_connection:
+          type: string
+          enum:
+            - connecting
+            - connected
+            - unreachable
+            - disconnected
+
+    AgentModeRequest:
+      type: object
+      required:
+        - mode
+      properties:
+        mode:
+          type: string
+          enum:
+            - connected
+            - disconnected
