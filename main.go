@@ -24,12 +24,16 @@ func main() {
 
 	// default configuration
 	cfg := config.NewConfigurationWithOptionsAndDefaults(
-		config.WithHTTPPort(8080),
+		config.WithServer(config.Server{
+			HTTPPort: 8080,
+			Mode:     "dev",
+		}),
+		config.WithAgent(config.Agent{
+			ID: uuid.NewString(),
+		}),
 		config.WithAuth(config.Authentication{Enabled: false}),
 		config.WithLogFormat("console"),
 		config.WithLogLevel("debug"),
-		config.WithServerMode("dev"),
-		config.WithAgentID(uuid.NewString()),
 	)
 	registerLoggingFlags(rootCmd, cfg)
 

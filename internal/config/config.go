@@ -1,5 +1,7 @@
 package config
 
+import "time"
+
 type ServerModeType string
 
 const (
@@ -35,8 +37,8 @@ type Agent struct {
 }
 
 type Console struct {
-	URL            string `debugmap:"visible" default:"localhost:7443"`
-	UpdateInterval string `debugmap:"visible" default:"5s"`
+	URL            string        `debugmap:"visible" default:"localhost:7443"`
+	UpdateInterval time.Duration `debugmap:"visible" default:"5s"`
 }
 
 type Authentication struct {

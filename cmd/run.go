@@ -40,7 +40,7 @@ func NewRunCommand(cfg *config.Configuration) *cobra.Command {
   agent run --mode connected --agent-id 550e8400-e29b-41d4-a716-446655440000 --source-id 6ba7b810-9dad-11d1-80b4-00c04fd430c8 --authentication-enabled --authentication-jwt-filepath /path/to/jwt
 
   # Run agent in production mode
-  agent run --agent-id 550e8400-e29b-41d4-a716-446655440000 --source-id 6ba7b810-9dad-11d1-80b4-00c04fd430c8 --server-mode prod --statics-folder /var/www/statics`,
+  agent run --agent-id 550e8400-e29b-41d4-a716-446655440000 --source-id 6ba7b810-9dad-11d1-80b4-00c04fd430c8 --server-mode prod --server-statics-folder /var/www/statics`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := validateConfiguration(cfg); err != nil {
 				return err
@@ -56,18 +56,12 @@ func NewRunCommand(cfg *config.Configuration) *cobra.Command {
 			sched := scheduler.NewScheduler(cfg.Agent.NumWorkers)
 			defer sched.Close()
 
-			// parse console update interval
-			updateInterval, err := time.ParseDuration(cfg.Console.UpdateInterval)
-			if err != nil {
-				return fmt.Errorf("invalid console-update-interval %q: %w", cfg.Console.UpdateInterval, err)
-			}
-
 			// init services
 			var consoleSrv *services.Console
 			if models.AgentMode(cfg.Agent.Mode) == models.AgentModeConnected {
-				consoleSrv = services.NewConnectedConsoleService(sched, cfg.Console.URL, updateInterval)
+				consoleSrv = services.NewConnectedConsoleService(sched, cfg.Console.URL, cfg.Console.UpdateInterval)
 			} else {
-				consoleSrv = services.NewConsoleService(sched, cfg.Console.URL, updateInterval)
+				consoleSrv = services.NewConsoleService(sched, cfg.Console.URL, cfg.Console.UpdateInterval)
 			}
 			collectorSrv := services.NewCollectorService(sched)
 
@@ -185,8 +179,8 @@ func validateUUID(value, name string) error {
 }
 
 func registerServerFlags(flagSet *pflag.FlagSet, config *config.Configuration) {
-	flagSet.IntVar(&config.Server.HTTPPort, "http-port", config.Server.HTTPPort, "Port on which the HTTP server is listening")
-	flagSet.StringVar(&config.Server.StaticsFolder, "statics-folder", config.Server.StaticsFolder, "Path to statics folder")
+	flagSet.IntVar(&config.Server.HTTPPort, "server-http-port", config.Server.HTTPPort, "Port on which the HTTP server is listening")
+	flagSet.StringVar(&config.Server.StaticsFolder, "server-statics-folder", config.Server.StaticsFolder, "Path to statics folder")
 	flagSet.StringVar(&config.Server.Mode, "server-mode", config.Server.Mode, "Server mode: either prod or dev. If prod the statics folder must be set")
 }
 
@@ -206,5 +200,5 @@ func registerAgentFlags(flagSet *pflag.FlagSet, config *config.Configuration) {
 
 func registerConsoleFlags(flagSet *pflag.FlagSet, config *config.Configuration) {
 	flagSet.StringVar(&config.Console.URL, "console-url", config.Console.URL, "URL of console.redhat.com")
-	flagSet.StringVar(&config.Console.UpdateInterval, "console-update-interval", config.Console.UpdateInterval, "Interval for console status updates")
+	flagSet.DurationVar(&config.Console.UpdateInterval, "console-update-interval", config.Console.UpdateInterval, "Interval for console status updates")
 }
