@@ -77,16 +77,14 @@ func NewServer(cfg *config.Configuration, registerHandlerFn func(router *gin.Rou
 // Start starts the HTTP server and handles graceful shutdown when the context is cancelled.
 func (r *Server) Start(ctx context.Context) error {
 	if err := r.srv.ListenAndServe(); err != nil {
-		zap.S().Named("http").Errorw("failed to start server", "error", err)
 		return err
 	}
 
 	return nil
 }
 
-func (r *Server) Stop(ctx context.Context, doneCh chan any) {
+func (r *Server) Stop(ctx context.Context) {
 	if err := r.srv.Shutdown(ctx); err != nil {
 		zap.S().Errorw("server shutdown", "error", err)
 	}
-	doneCh <- struct{}{}
 }

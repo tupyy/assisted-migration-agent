@@ -1,4 +1,4 @@
-.PHONY: generate generate.proto build
+.PHONY: generate generate.proto build run
 
 PODMAN ?= podman
 GIT_COMMIT=$(shell git rev-list -1 HEAD --abbrev-commit)
@@ -27,3 +27,6 @@ build:
 	@echo "Building $(BINARY_NAME)..."
 	go build -ldflags="-X main.sha=${GIT_COMMIT}" -o $(BINARY_PATH) $(MAIN_PATH)
 	@echo "Build complete: $(BINARY_PATH)"
+
+run:
+	$(BINARY_PATH) run

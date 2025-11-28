@@ -35,6 +35,7 @@ func (c *Configuration) ToOption() ConfigurationOption {
 		to.HTTPPort = c.HTTPPort
 		to.StaticsFolder = c.StaticsFolder
 		to.DataFolder = c.DataFolder
+		to.ConsoleURL = c.ConsoleURL
 		to.Auth = c.Auth
 		to.LogFormat = c.LogFormat
 		to.LogLevel = c.LogLevel
@@ -49,6 +50,7 @@ func (c *Configuration) DebugMap() map[string]any {
 	debugMap["HTTPPort"] = helpers.DebugValue(c.HTTPPort, false)
 	debugMap["StaticsFolder"] = helpers.DebugValue(c.StaticsFolder, false)
 	debugMap["DataFolder"] = helpers.DebugValue(c.DataFolder, false)
+	debugMap["ConsoleURL"] = helpers.DebugValue(c.ConsoleURL, false)
 	debugMap["Auth"] = helpers.DebugValue(c.Auth, false)
 	debugMap["LogFormat"] = helpers.DebugValue(c.LogFormat, false)
 	debugMap["LogLevel"] = helpers.DebugValue(c.LogLevel, false)
@@ -103,6 +105,13 @@ func WithStaticsFolder(staticsFolder string) ConfigurationOption {
 func WithDataFolder(dataFolder string) ConfigurationOption {
 	return func(c *Configuration) {
 		c.DataFolder = dataFolder
+	}
+}
+
+// WithConsoleURL returns an option that can set ConsoleURL on a Configuration
+func WithConsoleURL(consoleURL string) ConfigurationOption {
+	return func(c *Configuration) {
+		c.ConsoleURL = consoleURL
 	}
 }
 

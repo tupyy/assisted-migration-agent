@@ -5,10 +5,12 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
 	"github.com/tupyy/assisted-migration-agent/cmd"
 	"github.com/tupyy/assisted-migration-agent/internal/config"
+	"github.com/tupyy/assisted-migration-agent/pkg/logger"
 )
 
 func main() {
@@ -33,6 +35,12 @@ func main() {
 		fmt.Printf("%s", err)
 		os.Exit(1)
 	}
+
+	logger := logger.Init(cfg.LogFormat, cfg.LogLevel)
+	defer func() { _ = logger.Sync() }()
+
+	undo := zap.ReplaceGlobals(logger)
+	defer undo()
 
 	rootCmd.AddCommand(cmd.NewRunCommand(cfg))
 

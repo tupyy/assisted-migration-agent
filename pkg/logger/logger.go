@@ -5,9 +5,9 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// SetupLogger initializes and configures a zap logger based on the provided configuration.
+// Init initializes and configures a zap logger based on the provided configuration.
 // It sets up the appropriate log level and format according to the config settings.
-func SetupLogger(format string, logLevel string) *zap.Logger {
+func Init(format string, logLevel string) *zap.Logger {
 	lvl := zapcore.InfoLevel
 	level, err := zapcore.ParseLevel(logLevel)
 	if err == nil {

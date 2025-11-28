@@ -12,6 +12,7 @@ type Configuration struct {
 	HTTPPort      int            `debugmap:"visible" default:"8080"`
 	StaticsFolder string         `debugmap:"visible"`
 	DataFolder    string         `debugmap:"visible"`
+	ConsoleURL    string         `debugmap:"visible" default:"localhost:7443"`
 	Auth          Authentication `debugmap:"visible"`
 
 	// Log
