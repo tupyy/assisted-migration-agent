@@ -147,13 +147,15 @@ components:
           enum:
             - connected
             - disconnected
+          description: Target mode for the agent
         console_connection:
           type: string
           enum:
+            - disconnected
             - connecting
             - connected
-            - unreachable
-            - disconnected
+            - error
+          description: Current console connection status
 
     AgentModeRequest:
       type: object

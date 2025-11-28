@@ -14,7 +14,7 @@ const (
 	AgentStatusConsoleConnectionConnected    AgentStatusConsoleConnection = "connected"
 	AgentStatusConsoleConnectionConnecting   AgentStatusConsoleConnection = "connecting"
 	AgentStatusConsoleConnectionDisconnected AgentStatusConsoleConnection = "disconnected"
-	AgentStatusConsoleConnectionUnreachable  AgentStatusConsoleConnection = "unreachable"
+	AgentStatusConsoleConnectionError        AgentStatusConsoleConnection = "error"
 )
 
 // Defines values for AgentStatusMode.
@@ -43,14 +43,17 @@ type AgentModeRequestMode string
 
 // AgentStatus defines model for AgentStatus.
 type AgentStatus struct {
+	// ConsoleConnection Current console connection status
 	ConsoleConnection AgentStatusConsoleConnection `json:"console_connection"`
-	Mode              AgentStatusMode              `json:"mode"`
+
+	// Mode Target mode for the agent
+	Mode AgentStatusMode `json:"mode"`
 }
 
-// AgentStatusConsoleConnection defines model for AgentStatus.ConsoleConnection.
+// AgentStatusConsoleConnection Current console connection status
 type AgentStatusConsoleConnection string
 
-// AgentStatusMode defines model for AgentStatus.Mode.
+// AgentStatusMode Target mode for the agent
 type AgentStatusMode string
 
 // CollectorStartRequest defines model for CollectorStartRequest.

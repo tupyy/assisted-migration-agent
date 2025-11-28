@@ -140,7 +140,7 @@ func (c *Collector) Collect(ctx context.Context, creds models.VCenterCredentials
 	}
 
 	zap.S().Named("collector").Infof("Fill the inventory object with more data")
-	fillInventoryObjectWithMoreData(vms, inv)
+	c.fillInventoryObjectWithMoreData(vms, inv)
 
 	return inv, nil
 }
